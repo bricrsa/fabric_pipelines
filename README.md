@@ -13,8 +13,6 @@ It is assumed that the concepts of Fabric capacities, workspaces and workloads i
 - Give appropriate permissions (RBAC) to the Service Principal
 - Create a Fabric Data Factory pipeline that executes a web activity to post to the relevant API (not currently formally supported)
 
-![Pause or Resume Pipeline with error handling](./images/More%20Complex%20Pipeline.png)
-
 This will allow you create a Pipeline that you can call from anywhere in Fabric to pause, resume or scale a Capacity.
 
 **Provision**
@@ -69,6 +67,19 @@ JSON for Pipelines can be found here
 - [Inner Pipeline to run pause or resume, can be run standalone](./pipelines/ManageCapacityPauseResume.json)
 - [Scale Pipeline](./pipelines/ScaleCapacity.json)
 Note that while it possible to view JSON for each pipeline, it not currently possible to use this deploy another version of this pipeline, as in Azure Data Factory (Feb 2024).
+
+## Error handling information
+Add a set variable activity to harvest the possible from stopping a stopped capacity. Use the following expression for the Pipeline variable
+```
+@activity('PauseResumeCapacity').output.error.message
+```
+Add an if condition with the following expression
+```
+@or(equals(variables('CapacityErrorResponse'),'Service is not ready to be updated'),equals(variables('CapacityErrorResponse'),''))
+```
+For True, use a Wait for 1 second, for False fail the pipeline with a Fail activity.
+
+![Pause or Resume Pipeline with error handling](./images/More%20Complex%20Pipeline.png)
 
 ## Final thoughts
 While the APIs used here for the Fabric capacities are not yet formally documented at time of writing (Feb 2024), using Fabric pipelines forms a useful orchestration alternative to the more common use of Logic Apps for this purpose. This means you can use a Fabric SaaS solution for Fabric capacity management.
