@@ -1,0 +1,121 @@
+{
+    "name": "ManageCapacityPauseResume",
+    "objectId": "7e6943a6-8611-4e22-85af-02bf9a7f5354",
+    "properties": {
+        "activities": [
+            {
+                "name": "PauseResumeCapacity",
+                "type": "WebActivity",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "method": "POST",
+                    "relativeUrl": {
+                        "value": "@concat('/subscriptions/',pipeline().parameters.subscription_id,'/resourceGroups/',pipeline().parameters.resourcegroup,'/providers/Microsoft.Fabric/capacities/',pipeline().parameters.capacities,'/',pipeline().parameters.action,'?api-version=2022-07-01-preview')",
+                        "type": "Expression"
+                    }
+                },
+                "externalReferences": {
+                    "connection": "2d9bb176-b0ee-4114-8cbf-c26c7699269f"
+                }
+            },
+            {
+                "name": "Set output error code if error",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "PauseResumeCapacity",
+                        "dependencyConditions": [
+                            "Completed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "variableName": "CapacityErrorResponse",
+                    "value": {
+                        "value": "@activity('PauseResumeCapacity').output.error.message",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Succeed if Capacity status appropriate otherwise fail",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "Set output error code if error",
+                        "dependencyConditions": [
+                            "Completed"
+                        ]
+                    }
+                ],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@or(equals(variables('CapacityErrorResponse'),'Service is not ready to be updated'),equals(variables('CapacityErrorResponse'),''))",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "Fail2",
+                            "type": "Fail",
+                            "dependsOn": [],
+                            "typeProperties": {
+                                "message": "Failed to execture",
+                                "errorCode": {
+                                    "value": "@variables('CapacityErrorResponse')",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    ],
+                    "ifTrueActivities": [
+                        {
+                            "name": "Wait1",
+                            "type": "Wait",
+                            "dependsOn": [],
+                            "typeProperties": {
+                                "waitTimeInSeconds": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "subscription_id": {
+                "type": "string",
+                "defaultValue": "xxxxxxx-f673-42ce-xxxx-9adbc3dd9219"
+            },
+            "resourcegroup": {
+                "type": "string",
+                "defaultValue": "adf-etl-dev"
+            },
+            "capacities": {
+                "type": "string",
+                "defaultValue": "fab279"
+            },
+            "action": {
+                "type": "string",
+                "defaultValue": "suspend"
+            }
+        },
+        "variables": {
+            "CapacityErrorResponse": {
+                "type": "String"
+            }
+        },
+        "annotations": [],
+        "lastModifiedByObjectId": "4bb42042-ece2-4d1b-aff5-8aee100f7e19",
+        "lastPublishTime": "2024-01-29T15:09:26Z"
+    }
+}

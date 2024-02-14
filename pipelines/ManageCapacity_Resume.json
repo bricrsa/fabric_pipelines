@@ -1,0 +1,56 @@
+{
+    "name": "ManageCapacity_Resume",
+    "objectId": "23655398-a60b-4f72-b9cc-4047fdd43f98",
+    "properties": {
+        "activities": [
+            {
+                "name": "ResumeAllCapacities",
+                "type": "ForEach",
+                "dependsOn": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@variables('CapacityArray')",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Resume Capacity",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [],
+                            "policy": {
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "7e6943a6-8611-4e22-85af-02bf9a7f5354",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": true,
+                                "parameters": {
+                                    "capacities": {
+                                        "value": "@item()",
+                                        "type": "Expression"
+                                    },
+                                    "action": "resume"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "variables": {
+            "CapacityArray": {
+                "type": "Array",
+                "defaultValue": [
+                    "fab279",
+                    "fab280",
+                    "fab281"
+                ]
+            }
+        },
+        "annotations": [],
+        "lastModifiedByObjectId": "4bb42042-ece2-4d1b-aff5-8aee100f7e19",
+        "lastPublishTime": "2023-10-19T14:41:32Z"
+    }
+}

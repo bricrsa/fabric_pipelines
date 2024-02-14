@@ -1,0 +1,58 @@
+{
+    "name": "ManageCapacityScale",
+    "objectId": "8696abc4-5782-47ab-a0dd-fa8cac8e4364",
+    "properties": {
+        "activities": [
+            {
+                "name": "ScaleCapacity",
+                "type": "WebActivity",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "method": "PATCH",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "relativeUrl": {
+                        "value": "@concat('/subscriptions/',pipeline().parameters.subscription_id,'/resourceGroups/',pipeline().parameters.resourcegroup,'/providers/Microsoft.Fabric/capacities/',pipeline().parameters.capacities,'?api-version=2022-07-01-preview')",
+                        "type": "Expression"
+                    },
+                    "body": {
+                        "value": "@json(concat('{\"sku\":{\"name\":\"',pipeline().parameters.sku,'\",\"tier\":\"Fabric\"}}'))",
+                        "type": "Expression"
+                    }
+                },
+                "externalReferences": {
+                    "connection": "2d9bb176-b0ee-4114-8cbf-c26c7699269f"
+                }
+            }
+        ],
+        "parameters": {
+            "subscription_id": {
+                "type": "string",
+                "defaultValue": "xxxxxxxxx-f673-42ce-xxxx-9adbc3dd9219"
+            },
+            "resourcegroup": {
+                "type": "string",
+                "defaultValue": "adf-etl-dev"
+            },
+            "capacities": {
+                "type": "string",
+                "defaultValue": "fab280"
+            },
+            "sku": {
+                "type": "string",
+                "defaultValue": "F4"
+            }
+        },
+        "annotations": [],
+        "lastModifiedByObjectId": "4bb42042-ece2-4d1b-aff5-8aee100f7e19",
+        "lastPublishTime": "2024-02-14T18:14:10Z"
+    }
+}
