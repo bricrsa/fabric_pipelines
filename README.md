@@ -83,3 +83,8 @@ For True, use a Wait for 1 second, for False fail the pipeline with a Fail activ
 
 ## Final thoughts
 While the APIs used here for the Fabric capacities are not yet formally documented at time of writing (Feb 2024), using Fabric pipelines forms a useful orchestration alternative to the more common use of Logic Apps for this purpose. This means you can use a Fabric SaaS solution for Fabric capacity management.
+
+
+## Useful links (that I found after writing this)
+ - [Using Powershell to manage a capacity](https://github.com/sergeig888/ps-fskumgmt-fabric)
+ - [Useful info on using ADF, Fabric or Postman to manage capacities](https://github.com/nocsi-zz/fabric-capacity-management)
