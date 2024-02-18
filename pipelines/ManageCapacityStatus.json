@@ -1,0 +1,83 @@
+{
+    "name": "ManageCapacityStatus",
+    "objectId": "4ab8de6a-c702-478c-8b86-9516464a6d55",
+    "properties": {
+        "activities": [
+            {
+                "name": "StatusOfCapacity",
+                "type": "WebActivity",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "method": "GET",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "relativeUrl": {
+                        "value": "@concat('/subscriptions/',pipeline().parameters.subscription_id,'/resourceGroups/',pipeline().parameters.resourcegroup,'/providers/Microsoft.Fabric/capacities/',pipeline().parameters.capacities,'?api-version=2022-07-01-preview')",
+                        "type": "Expression"
+                    },
+                    "body": {
+                        "value": "{}",
+                        "type": "Expression"
+                    }
+                },
+                "externalReferences": {
+                    "connection": "2d9bb176-b0ee-4114-8cbf-c26c7699269f"
+                }
+            },
+            {
+                "name": "SetCapacityStatus",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "StatusOfCapacity",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "variableName": "pipelineReturnValue",
+                    "value": [
+                        {
+                            "key": "CapacityStatus",
+                            "value": {
+                                "type": "Expression",
+                                "content": "@activity('StatusOfCapacity').output.properties.state"
+                            }
+                        }
+                    ],
+                    "setSystemVariable": true
+                }
+            }
+        ],
+        "parameters": {
+            "subscription_id": {
+                "type": "string",
+                "defaultValue": "cf399ec2-f673-42ce-8f57-9adbc3dd9219"
+            },
+            "resourcegroup": {
+                "type": "string",
+                "defaultValue": "adf-etl-dev"
+            },
+            "capacities": {
+                "type": "string",
+                "defaultValue": "fab280"
+            }
+        },
+        "annotations": [],
+        "lastModifiedByObjectId": "4bb42042-ece2-4d1b-aff5-8aee100f7e19",
+        "lastPublishTime": "2024-02-15T11:26:23Z"
+    }
+}
