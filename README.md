@@ -34,6 +34,8 @@ Add some parameters to make your pipeline more flexible, complete them appropria
 
 Add a Web Activity to the canvas. You will need to specify the service principal you created earlier.
 
+For the Base URL, add https://management.azure.com, for the token audience URI add https://management.azure.com;https://management.core.windows.net/
+
 For the relative URL in the Web activity add the following expression:
 ```
 @concat('/subscriptions/',pipeline().parameters.subscription_id,'/resourceGroups/',pipeline().parameters.resourcegroup,'/providers/Microsoft.Fabric/capacities/',pipeline().parameters.capacities,'/',pipeline().parameters.action,'?api-version=2022–07–01-preview')
@@ -78,6 +80,8 @@ Add an if condition with the following expression
 @or(equals(variables('CapacityErrorResponse'),'Service is not ready to be updated'),equals(variables('CapacityErrorResponse'),''))
 ```
 For True, use a Wait for 1 second, for False fail the pipeline with a Fail activity.
+
+NOTE: you can also test for the status of the Capacity you can also do this by providing no JSON payload to the same API as used for scaling, using the GET method.
 
 ![Pause or Resume Pipeline with error handling](./images/More%20Complex%20Pipeline.png)
 
