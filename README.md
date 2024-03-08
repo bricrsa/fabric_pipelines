@@ -92,3 +92,4 @@ While the APIs used here for the Fabric capacities are not yet formally document
 ## Useful links (that I found after writing this)
  - [Using Powershell to manage a capacity](https://github.com/sergeig888/ps-fskumgmt-fabric)
  - [Useful info on using ADF, Fabric or Postman to manage capacities](https://github.com/nocsi-zz/fabric-capacity-management)
+ - [Scaling Fabric by running Python in Automation Account](https://github.com/jugi92/manage_fabric_capacity_python_runbook)
